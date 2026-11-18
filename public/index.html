@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API-мок для фронтенду</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap navigation">
+      <a class="brand" href="/" aria-label="API-мок - редактор">
+        <span class="brand-mark" aria-hidden="true">{ }</span>
+        <span>API-мок</span>
+      </a>
+      <a class="nav-link" href="/demo">Відкрити демокаталог ↗</a>
+    </div>
+  </header>
+  <main class="wrap workspace">
+    <header class="page-heading">
+      <div>
+        <h1>API-мок для фронтенду</h1>
+        <p>Налаштуйте JSON-відповідь і перевірте, як її обробляє каталог.</p>
+      </div>
+      <button class="button secondary" id="copy-demo" type="button">Копіювати адресу демо</button>
+    </header>
+    <p id="copy-feedback" class="copy-feedback" role="status" hidden></p>
+    <div class="workspace-grid">
+      <section class="panel editor-panel" aria-labelledby="editor-heading">
+        <div class="panel-heading">
+          <h2 id="editor-heading">Редактор маршрутів</h2>
+          <button class="button secondary" type="button" id="add-route">+ Маршрут</button>
+        </div>
+        <p id="editor-error" class="feedback error" role="alert" hidden></p>
+        <form id="route-form" hidden>
+          <label for="route-select">Маршрут</label>
+          <select id="route-select"></select>
+          <div class="route-inputs">
+            <div>
+              <label for="route-method">Метод</label>
+              <select id="route-method"><option>GET</option><option>POST</option></select>
+            </div>
+            <div>
+              <label for="route-path">Шлях</label>
+              <input id="route-path" required placeholder="/mock/products" spellcheck="false">
+            </div>
+          </div>
+          <div class="variant-heading">
+            <h3>Варіанти відповіді</h3>
+            <button class="text-button" type="button" id="add-variant">+ Варіант</button>
+          </div>
+          <ul class="variant-list" id="variant-list" aria-label="Варіанти відповіді"></ul>
+          <div class="variant-fields">
+            <label>Назва
+              <input id="variant-name" required>
+            </label>
+            <label>HTTP-статус
+              <input id="variant-status" type="number" min="200" max="599" required>
+            </label>
+            <label>Затримка, мс
+              <input id="variant-delay" type="number" min="0" max="10000" required>
+            </label>
+          </div>
+          <label class="body-label" for="variant-body">Тіло відповіді (JSON)</label>
+          <textarea id="variant-body" rows="6" spellcheck="false" required></textarea>
+          <label class="activation">
+            <input id="variant-active" type="radio" name="variant-active">
+            Зробити цей варіант активним
+          </label>
+          <div class="form-actions">
+            <button class="button primary" id="save-config" type="submit">Зберегти зміни</button>
+            <span class="feedback success" id="save-feedback" role="status"></span>
+          </div>
+        </form>
+      </section>
+      <div class="preview-column">
+        <section class="panel catalog-panel" aria-labelledby="catalog-heading">
+          <div class="panel-heading"><h2 id="catalog-heading">Демокаталог</h2></div>
+          <div class="catalog-controls">
+  <code>GET /mock/products</code>
+  <button class="button secondary" id="refresh-products" type="button">Оновити каталог</button>
+</div>
+<div class="catalog-body" id="catalog-body" aria-live="polite"></div>
+        </section>
+        <section class="panel log-panel" aria-labelledby="log-heading">
+          <div class="panel-heading">
+            <h2 id="log-heading">Журнал запитів</h2>
+            <button class="text-button" type="button" id="refresh-log">Оновити</button>
+          </div>
+          <div class="log-table">
+            <table>
+              <thead><tr><th scope="col">Метод</th><th scope="col">Шлях</th><th scope="col">Статус</th><th scope="col">Час</th></tr></thead>
+              <tbody id="log-rows"></tbody>
+            </table>
+          </div>
+          <p class="log-empty" id="log-empty">Записів ще немає.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="/editor.js"></script>
+</body>
+</html>

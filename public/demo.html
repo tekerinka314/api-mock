@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Демокаталог · API-мок</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap navigation">
+      <a class="brand" href="/" aria-label="API-мок - редактор">
+        <span class="brand-mark" aria-hidden="true">{ }</span>
+        <span>API-мок</span>
+      </a>
+      <a class="nav-link" href="/">Повернутися до редактора</a>
+    </div>
+  </header>
+  <main class="wrap standalone">
+    <div class="page-heading">
+      <div>
+        <h1>Демокаталог</h1>
+        <p>Каталог відображає відповідь активного варіанта маршруту.</p>
+      </div>
+    </div>
+    <section aria-label="Каталог товарів" class="panel catalog-panel demo-panel">
+      <div class="catalog-controls">
+  <code>GET /mock/products</code>
+  <button class="button secondary" id="refresh-products" type="button">Оновити каталог</button>
+</div>
+<div class="catalog-body" id="catalog-body" aria-live="polite"></div>
+    </section>
+  </main>
+  <script type="module" src="/catalog.js"></script>
+</body>
+</html>
