@@ -61,7 +61,6 @@ export function openStore(filePath) {
     save(candidate) {
       validate(candidate);
       mkdirSync(dirname(filePath), { recursive: true });
-      // Перейменування в тій самій папці замінює лише повністю записаний файл.
       const temporaryPath = filePath + '.tmp';
       writeFileSync(temporaryPath, JSON.stringify(candidate, null, 2) + '\n', 'utf8');
       renameSync(temporaryPath, filePath);

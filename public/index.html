@@ -8,32 +8,23 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="wrap navigation">
-      <a class="brand" href="/" aria-label="API-мок - редактор">
-        <span class="brand-mark" aria-hidden="true">{ }</span>
-        <span>API-мок</span>
-      </a>
-      <a class="nav-link" href="/demo">Відкрити демокаталог ↗</a>
-    </div>
-  </header>
   <main class="wrap workspace">
     <header class="page-heading">
-      <div>
-        <h1>API-мок для фронтенду</h1>
-        <p>Налаштуйте JSON-відповідь і перевірте, як її обробляє каталог.</p>
+      <h1>API-мок для фронтенду</h1>
+      <div class="page-actions">
+        <a class="nav-link" href="/demo">Відкрити демокаталог</a>
+        <button class="button secondary" id="copy-demo" type="button">Копіювати адресу демо</button>
       </div>
-      <button class="button secondary" id="copy-demo" type="button">Копіювати адресу демо</button>
+      <p id="copy-feedback" class="copy-feedback" role="status" hidden></p>
     </header>
-    <p id="copy-feedback" class="copy-feedback" role="status" hidden></p>
     <div class="workspace-grid">
       <section class="panel editor-panel" aria-labelledby="editor-heading">
         <div class="panel-heading">
           <h2 id="editor-heading">Редактор маршрутів</h2>
-          <button class="button secondary" type="button" id="add-route">+ Маршрут</button>
+          <button class="button secondary" type="button" id="add-route">Додати маршрут</button>
         </div>
-        <p id="editor-error" class="feedback error" role="alert" hidden></p>
-        <form id="route-form" hidden>
+        <p id="editor-error" class="feedback error" role="alert" tabindex="-1" hidden></p>
+        <form id="route-form" hidden novalidate>
           <label for="route-select">Маршрут</label>
           <select id="route-select"></select>
           <div class="route-inputs">
@@ -48,7 +39,7 @@
           </div>
           <div class="variant-heading">
             <h3>Варіанти відповіді</h3>
-            <button class="text-button" type="button" id="add-variant">+ Варіант</button>
+            <button class="text-button" type="button" id="add-variant">Додати варіант</button>
           </div>
           <ul class="variant-list" id="variant-list" aria-label="Варіанти відповіді"></ul>
           <div class="variant-fields">
@@ -70,6 +61,7 @@
           </label>
           <div class="form-actions">
             <button class="button primary" id="save-config" type="submit">Зберегти зміни</button>
+            <button class="button secondary" id="discard-config" type="button">Скасувати зміни</button>
             <span class="feedback success" id="save-feedback" role="status"></span>
           </div>
         </form>

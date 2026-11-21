@@ -18,6 +18,13 @@ function showMessage(title, detail, modifier = '') {
   catalogBody.append(message);
 }
 
+function isProduct(product) {
+  return product !== null && typeof product === 'object' && !Array.isArray(product)
+    && (product.name == null || typeof product.name === 'string')
+    && (product.category == null || typeof product.category === 'string')
+    && (product.price == null || Number.isFinite(product.price));
+}
+
 function showProducts(products) {
   const list = element('ul', 'products', '');
   const priceFormat = new Intl.NumberFormat('uk-UA', {
@@ -29,10 +36,10 @@ function showProducts(products) {
   for (const product of products) {
     const row = element('li', 'product', '');
     const detail = element('div', 'product-detail', '');
-    detail.append(element('strong', '', product?.name ?? 'Товар'));
-    if (product?.category) detail.append(element('small', '', product.category));
+    detail.append(element('strong', '', product.name?.trim() || 'Товар'));
+    if (product.category) detail.append(element('small', '', product.category));
     row.append(detail);
-    if (typeof product?.price === 'number') row.append(element('span', 'product-price', priceFormat.format(product.price)));
+    if (typeof product.price === 'number') row.append(element('span', 'product-price', priceFormat.format(product.price)));
     list.append(row);
   }
   catalogBody.append(list);
@@ -48,10 +55,11 @@ export async function loadProducts() {
     catalogBody.replaceChildren();
     if (!response.ok) {
       statusLine('HTTP ' + response.status);
-      showMessage('Помилка завантаження', body?.message ?? 'Запит до мока завершився помилкою.', 'catalog-error');
-    } else if (!Array.isArray(body)) {
+      const message = typeof body?.message === 'string' && body.message.trim();
+      showMessage('Помилка завантаження', message || 'Запит до мока завершився помилкою.', 'catalog-error');
+    } else if (!Array.isArray(body) || !body.every(isProduct)) {
       statusLine('HTTP ' + response.status);
-      showMessage('Неочікуваний формат', 'Каталог очікує масив товарів.', 'catalog-error');
+      showMessage('Неочікуваний формат', 'Каталог очікує масив об’єктів товарів із текстовою назвою й категорією та числовою ціною.', 'catalog-error');
     } else if (body.length === 0) {
       statusLine('HTTP ' + response.status);
       showMessage('Каталог порожній', 'За цією відповіддю товарів немає.');

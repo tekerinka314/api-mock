@@ -6,6 +6,7 @@ const routeSelect = byId('route-select');
 const variantList = byId('variant-list');
 const activeInput = byId('variant-active');
 const saveButton = byId('save-config');
+const addRouteButton = byId('add-route');
 const editorError = byId('editor-error');
 const saveFeedback = byId('save-feedback');
 
@@ -24,6 +25,7 @@ function clearEditorFeedback() {
 function showEditorError(message) {
   editorError.textContent = message;
   editorError.hidden = false;
+  editorError.focus();
 }
 
 function renderRoutes() {
@@ -42,16 +44,18 @@ function renderVariants() {
     button.type = 'button';
     button.className = 'variant-button';
     button.setAttribute('aria-pressed', index === variantIndex);
-    const detail = [item.status || '…', (item.name || 'Без назви').trim()];
-    if (item.delayMs) detail.push(item.delayMs + ' мс');
-    button.textContent = detail.join(' · ');
+    const status = document.createElement('code');
+    status.textContent = item.status ?? '…';
+    const name = document.createElement('span');
+    name.className = 'variant-name';
+    name.textContent = item.name.trim() || 'Без назви';
+    if (item.delayMs) name.append(' (' + item.delayMs + ' мс)');
+    button.append(status, ' ', name);
     if (index === savedActive || index === route().active) {
-      const badge = document.createElement('span');
-      badge.className = 'active-badge';
-      const isSaved = index === savedActive;
-      badge.classList.toggle('pending-badge', !isSaved);
-      badge.textContent = isSaved ? 'Активний' : 'Після збереження';
-      button.append(badge);
+      const state = document.createElement('span');
+      state.className = 'variant-state';
+      state.textContent = index === savedActive ? 'Активний' : 'Після збереження';
+      button.append(' ', state);
     }
 
     button.addEventListener('click', () => {
@@ -90,7 +94,7 @@ function renderRouteSummary() {
   renderVariants();
 }
 
-byId('add-route').disabled = true;
+addRouteButton.disabled = true;
 
 routeSelect.addEventListener('change', () => {
   routeIndex = Number(routeSelect.value);
@@ -99,7 +103,7 @@ routeSelect.addEventListener('change', () => {
   renderRouteFields();
 });
 
-byId('add-route').addEventListener('click', () => {
+addRouteButton.addEventListener('click', () => {
   config.routes.push({ method: 'GET', path: '', active: 0, variants: [newVariant()] });
   routeIndex = config.routes.length - 1;
   variantIndex = 0;
@@ -140,8 +144,24 @@ activeInput.addEventListener('change', () => {
   clearEditorFeedback();
 });
 
+byId('discard-config').addEventListener('click', () => {
+  config = structuredClone(savedConfig);
+  routeIndex = Math.min(routeIndex, config.routes.length - 1);
+  variantIndex = route().active;
+  clearEditorFeedback();
+  renderRouteFields();
+  saveFeedback.textContent = 'Незбережені зміни скасовано.';
+});
+
+function setSaving(active) {
+  for (const control of form.elements) control.disabled = active;
+  addRouteButton.disabled = active;
+  form.setAttribute('aria-busy', String(active));
+}
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
+  if (saveButton.disabled) return;
   clearEditorFeedback();
   try {
     JSON.parse(variant().body);
@@ -151,7 +171,8 @@ form.addEventListener('submit', async (event) => {
     return;
   }
 
-  saveButton.disabled = true;
+  setSaving(true);
+  saveFeedback.textContent = 'Збереження…';
   try {
     const response = await fetch('/api/config', {
       method: 'PUT',
@@ -160,6 +181,7 @@ form.addEventListener('submit', async (event) => {
     });
     const result = await response.json();
     if (!response.ok) {
+      saveFeedback.textContent = '';
       showEditorError(result.message);
       return;
     }
@@ -167,9 +189,10 @@ form.addEventListener('submit', async (event) => {
     renderVariants();
     saveFeedback.textContent = 'Налаштування збережено.';
   } catch {
+    saveFeedback.textContent = '';
     showEditorError('Не вдалося зберегти налаштування. Перевірте локальний сервер.');
   } finally {
-    saveButton.disabled = false;
+    setSaving(false);
   }
 });
 
@@ -220,7 +243,7 @@ async function startEditor() {
     variantIndex = route().active;
     renderRouteFields();
     form.hidden = false;
-    byId('add-route').disabled = false;
+    addRouteButton.disabled = false;
   } catch {
     showEditorError('Редактор не зміг завантажити налаштування.');
   }
