@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: api-mock-dmytro
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: main
+    buildCommand: npm install --ignore-scripts --no-audit --no-fund
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "24.x"
+      - key: MOCK_HOST
+        value: "0.0.0.0"
+      - key: MOCK_DATA
+        value: /tmp/api-mock/config.json

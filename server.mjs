@@ -96,7 +96,10 @@ export function createMockServer({
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const port = Number(process.env.PORT ?? 4311);
-  createMockServer().listen(port, '127.0.0.1', function () {
-    console.log('API-мок працює на http://127.0.0.1:' + this.address().port);
+  const host = process.env.MOCK_HOST || '127.0.0.1';
+  createMockServer().listen(port, host, function () {
+    const { address, family, port: boundPort } = this.address();
+    const hostname = family === 'IPv6' ? '[' + address + ']' : address;
+    console.log('API-мок працює на http://' + hostname + ':' + boundPort);
   });
 }
